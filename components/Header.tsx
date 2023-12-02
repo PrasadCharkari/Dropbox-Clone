@@ -14,8 +14,8 @@ function Header() {
 
                         alt="dropbox-logo"
                         className="invert p-1"
-                        height={40}
-                        width={40}
+                        height={50}
+                        width={50}
                     />
                 </div>
                 <h1 className='font-bold text-xl'>Dropbox</h1>
