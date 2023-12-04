@@ -3,6 +3,7 @@ import Dropzone from "@/components/Dropzone"
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/firebase";
 import { FileType } from "@/typing";
+import FilesTable from "@/components/ContentTable/FilesTable";
 
 async function Dasboard() {
     const { userId } = auth();
@@ -15,10 +16,21 @@ async function Dasboard() {
         downloadURL: doc.data().downloadURL,
         type: doc.data().type,
         size: doc.data().size,
-    }))
+    }));
+
+    console.log(skeletonFiles)
     return (
-        <div>
+        <div className="border-t">
             <Dropzone />
+            <section className="container space-y-5">
+                <h1 className="font-semibold">All Files</h1>
+
+                <div>
+
+                    <FilesTable skeletonFiles={skeletonFiles} />
+                </div>
+
+            </section>
         </div>
     )
 }

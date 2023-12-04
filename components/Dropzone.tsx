@@ -41,7 +41,7 @@ function Dropzone() {
             size: selectedFile.size,
         });
 
-        const imageRef = ref(storage, `users/$fuser.1dt/f1les/$(docRef.id)`);
+        const imageRef = ref(storage, `users/${user.id}/files/(docRef.id)`);
         uploadBytes(imageRef, selectedFile).then(async (snapshot) => {
             const downloadURL = await getDownloadURL(imageRef);
 
