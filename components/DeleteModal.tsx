@@ -1,47 +1,56 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
     Dialog,
     DialogContent,
     DialogDescription,
     DialogHeader,
     DialogTitle,
-} from "@/components/ui/dialog"
-import { db, storage } from "@/firebase"
-import { useAppStore } from "@/store/store"
-import { useUser } from "@clerk/nextjs"
-import { deleteDoc, doc } from "firebase/firestore"
-import { deleteObject, ref } from "firebase/storage"
-
+} from "@/components/ui/dialog";
+import { db, storage } from "@/firebase";
+import { useAppStore } from "@/store/store";
+import { useUser } from "@clerk/nextjs";
+import { deleteDoc, doc } from "firebase/firestore";
+import { deleteObject, ref } from "firebase/storage";
+import toast from "react-hot-toast";
 
 export function DeleteModal() {
     const { user } = useUser();
-    const [isDeleteModalOpen, setIsDeleteModalOpen, fileId, setFileId] = useAppStore((state) => [
-        state.isDeleteModalOpen,
-        state.setIsDeleteModalOpen,
-        state.fileId,
-        state.setFileId,
-    ])
+    const [isDeleteModalOpen, setIsDeleteModalOpen, fileId, setFileId] =
+        useAppStore((state) => [
+            state.isDeleteModalOpen,
+            state.setIsDeleteModalOpen,
+            state.fileId,
+            state.setFileId,
+        ]);
 
     async function deleteFile() {
-
         if (!user || !fileId) return;
 
-        const fileRef = ref(storage, `users/${user.id}/files/${fileId}`)
+        const toastId = toast.loading("Deleting...");
+
+        const fileRef = ref(storage, `users/${user.id}/files/${fileId}`);
 
         try {
-            deleteObject(fileRef).
-                then(async () => {
+            deleteObject(fileRef)
+                .then(async () => {
                     deleteDoc(doc(db, "users", user.id, "files", fileId)).then(() => {
-                        console.log("File was Deleted")
-                    })
+                        toast.success("File Successfully Deleted", {
+                            id: toastId,
+                        });
+                    });
                 })
+                .finally(() => {
+                    setIsDeleteModalOpen(false);
+                });
         } catch (error) {
-            console.log(error)
-        }
+            setIsDeleteModalOpen(false);
 
-        setIsDeleteModalOpen(false);
+            toast.error("Error Deleting File", {
+                id: toastId,
+            });
+        }
     }
 
     return (
@@ -51,12 +60,12 @@ export function DeleteModal() {
                 setIsDeleteModalOpen(isOpen);
             }}
         >
-
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                     <DialogTitle>Are you sure you want to delete?</DialogTitle>
                     <DialogDescription>
-                        This action cannot be undone. This will permanently delete your file!
+                        This action cannot be undone. This will permanently delete your
+                        file!
                     </DialogDescription>
                 </DialogHeader>
 
@@ -83,5 +92,5 @@ export function DeleteModal() {
                 </div>
             </DialogContent>
         </Dialog>
-    )
+    );
 }
