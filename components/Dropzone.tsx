@@ -33,7 +33,7 @@ function Dropzone() {
 
         const docRef = await addDoc(collection(db, "users", user.id, "files"), {
             userId: user.id,
-            filenane: selectedFile.name,
+            filename: selectedFile.name,
             fullName: user.fullName,
             profileImg: user.imageUrl,
             timestamp: serverTimestamp(),
@@ -41,7 +41,7 @@ function Dropzone() {
             size: selectedFile.size,
         });
 
-        const imageRef = ref(storage, `users/${user.id}/files/(docRef.id)`);
+        const imageRef = ref(storage, `users/${user.id}/files/${docRef.id}`);
         uploadBytes(imageRef, selectedFile).then(async (snapshot) => {
             const downloadURL = await getDownloadURL(imageRef);
 
